@@ -1,20 +1,26 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include "data.h"
+#include "llist.h"
 #include "bst.h"
 
+struct ll_node* head = NULL;
 struct node* root = NULL;
 
 char dataInputFilename[] = "log_input.txt";
 char dataOutputFilename1[] = "change_log.txt";
 char dataOutputFilename2[] = "log_present.txt";
 
-int docfile(struct cp_t data[]) {
+int docfile(ll_node** head) {
   FILE *f = fopen(dataInputFilename, "r");
   int n = 0;
+  char date[11];
+  char time[9];
+  char license[13];
+  int status;
 
-  while (fscanf(f, "%10s %8s %12s %d", data[n].date, data[n].time, data[n].license, &data[n].status) != EOF) {
+  while (fscanf(f, "%10s %8s %12s %d", date, time, license, &status) != EOF) {
+    push(&(*head), date, time, license, status);
     n++;
   }
 
@@ -22,39 +28,39 @@ int docfile(struct cp_t data[]) {
   return n;
 }
 
-void hienthi(struct cp_t data[], const int N) {
-  for (int i = 0; i < N; i++) {
-    printf("%s %s %s %d\n", data[i].date, data[i].time, data[i].license, data[i].status);
-    printf("\n");
-  }
-}
-
-void soluong_gui_lay(struct cp_t data[], char date[], int N) {
+void soluong_gui_lay(ll_node* node, char date[], int N) {
     int so_xe_lay = 0;
     int so_xe_gui = 0;
     for (int i = 0; i < N; i++) {
-        if(strcmp(date, data[i].date) == 0){
-            if(data[i].status == 0){
+        if(strcmp(date, node->date) == 0){
+            if(node->status == 0){
                 so_xe_lay++;
             }
             else
                 so_xe_gui++;
         }
+        node = node->next;
     }
     printf("Date %s Total %d, In %d, out %d\n", date, so_xe_gui+so_xe_lay, so_xe_gui, so_xe_lay);
 }
 
-void loc_va_insert(struct cp_t data[], node **root, int N) {
-    for (int i = N; i > 0; i--) {
+void loc_va_insert(ll_node* Node, node **root, int N) {
+    ll_node* head = Node;
+    while(Node->next != NULL) {
         int times = 0;
-        for(int j = 0; j < N; j++) {
-            if(strcmp(data[i].license, data[j].license) == 0){
+        ll_node *temp = Node;
+        temp = head;
+        while(temp != NULL) {
+            if(strcmp(Node->license, temp->license) == 0){
                 times++;
             }
+            temp = temp->next;
         }
+
         if(times % 2 == 1) {
-            insert(&(*root), data[i].license, data[i].date, data[i].time);
+            insert(&(*root), Node->license, Node->date, Node->time);
         }
+        Node = Node->next;
     }
 }
 
@@ -67,7 +73,6 @@ void printTime()
 }
 
 int main() {
-  struct cp_t data[512];
   int N;
   int option = 1;
   char date[11];
@@ -89,16 +94,17 @@ int main() {
     switch (option)
     {
     case 1:
-        N = docfile(data);
+        N = docfile(&head);
+        printf("Tong so %d ban ghi\n", N);
         printf("Doc du lieu thanh cong.\n");
         break;
     case 2:
         printf("Nhap ngay can tra: ");
         scanf("%s", date);
-        soluong_gui_lay(data, date, N);
+        soluong_gui_lay(head, date, N);
         break;
     case 3:
-        loc_va_insert(data, &root, N);
+        loc_va_insert(head, &root, N);
         soxe = count_tree(root);
         printf("Tong so xe hien co: %d\n", soxe);
         printf("Bien so \t Thoi gian gui\n");
