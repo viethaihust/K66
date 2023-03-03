@@ -76,6 +76,11 @@ int main() {
   struct tm tm = *localtime(&t);
   int soxe;
 
+  char file_date[11];
+  char file_time[9];
+  sprintf(file_date, "%d-%02d-%02d", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+  sprintf(file_time, "%02d:%02d:%02d", tm.tm_hour, tm.tm_min, tm.tm_sec);
+
   while (option != 7)
   {
     printf("Chuong trinh quan ly bai xe\nVui long chon mot trong cac chuc nang sau\n[1] Doc du lieu tu file log\n[2] Tra cuu so luong xe gui/lay theo ngay trong qua khu\n[3] Thong tin cac xe trong bai hien tai\n[4] Gui them xe moi\n[5] Tra xe\n[6] In cay\n[7] Thoat\nLua chon cua ban la:\n");
@@ -101,18 +106,14 @@ int main() {
     case 4:
         printf("Nhap bien so xe: ");
         scanf("%s", license);
-        char date[11];
-        char time[9];
-        sprintf(date, "%d-%02d-%02d", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
-        sprintf(time, "%02d:%02d:%02d", tm.tm_hour, tm.tm_min, tm.tm_sec);
         if (da_co_xe(root, license) == 1) {
             printf("%s : Loi bien so da ton tai\n", license);
         }
         else{
-            gui_xe(&root, license, date, time);
-            printf("%s : Gui xe thanh cong %s %s\n", license, date, time);
+            gui_xe(&root, license, file_date, file_time);
+            printf("%s : Gui xe thanh cong %s %s\n", license, file_date, file_time);
             FILE *f = fopen(dataOutputFilename, "a");
-            fprintf(f, "%s %s %s %d\n", date, time, license, 1);
+            fprintf(f, "%s %s %s %d\n", file_date, file_time, license, 1);
         }
         break;
     case 5:
@@ -125,7 +126,7 @@ int main() {
             deleteNode(&root, license);
             printf("%s : Lay xe thanh cong\n", license);
             FILE *f = fopen(dataOutputFilename, "a");
-            fprintf(f, "%s %s %s %d\n", date, time, license, 0);
+            fprintf(f, "%s %s %s %d\n", file_date, file_time, license, 0);
         }    
         break;
     case 6:
