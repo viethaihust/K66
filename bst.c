@@ -107,3 +107,12 @@ void freeTree(node** tree) {
     *tree = NULL;
   }
 }
+
+void luu_ra_file(node* root, char filename[]) {
+  FILE *f = fopen(filename, "a");
+  if (root != NULL) {
+    luu_ra_file(root->left, filename);
+    fprintf(f, "%s %s %s\n", root->date, root->time, root->license);
+    luu_ra_file(root->right, filename);
+  }
+}

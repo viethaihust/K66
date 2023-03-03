@@ -16,4 +16,6 @@ int da_co_xe(node* root, char license[]);
 node* minValueNode(node* node);
 void deleteNode(node** root, char license[]);
 void freeTree(node** tree);
+void luu_ra_file(node* root, char filename[]);
+
 #endif
