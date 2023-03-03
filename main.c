@@ -6,8 +6,9 @@
 
 struct node* root = NULL;
 
-const char dataInputFilename[] = "log_input.txt";
-const char dataOutputFilename[] = "change_log.txt";
+char dataInputFilename[] = "log_input.txt";
+char dataOutputFilename1[] = "change_log.txt";
+char dataOutputFilename2[] = "log_present.txt";
 
 int docfile(struct cp_t data[]) {
   FILE *f = fopen(dataInputFilename, "r");
@@ -81,9 +82,9 @@ int main() {
   sprintf(file_date, "%d-%02d-%02d", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
   sprintf(file_time, "%02d:%02d:%02d", tm.tm_hour, tm.tm_min, tm.tm_sec);
 
-  while (option != 7)
+  while (option != 8)
   {
-    printf("Chuong trinh quan ly bai xe\nVui long chon mot trong cac chuc nang sau\n[1] Doc du lieu tu file log\n[2] Tra cuu so luong xe gui/lay theo ngay trong qua khu\n[3] Thong tin cac xe trong bai hien tai\n[4] Gui them xe moi\n[5] Tra xe\n[6] In cay\n[7] Thoat\nLua chon cua ban la:\n");
+    printf("Chuong trinh quan ly bai xe\nVui long chon mot trong cac chuc nang sau\n[1] Doc du lieu tu file log\n[2] Tra cuu so luong xe gui/lay theo ngay trong qua khu\n[3] Thong tin cac xe trong bai hien tai\n[4] Gui them xe moi\n[5] Tra xe\n[6] In cay\n[7] Luu danh sach xe dang co trong bai ra file\n[8] Thoat\nLua chon cua ban la:\n");
     scanf("%d", &option);
     switch (option)
     {
@@ -112,8 +113,9 @@ int main() {
         else{
             gui_xe(&root, license, file_date, file_time);
             printf("%s : Gui xe thanh cong %s %s\n", license, file_date, file_time);
-            FILE *f = fopen(dataOutputFilename, "a");
+            FILE *f = fopen(dataOutputFilename1, "a");
             fprintf(f, "%s %s %s %d\n", file_date, file_time, license, 1);
+            fclose(f);
         }
         break;
     case 5:
@@ -125,14 +127,22 @@ int main() {
         else {
             deleteNode(&root, license);
             printf("%s : Lay xe thanh cong\n", license);
-            FILE *f = fopen(dataOutputFilename, "a");
+            FILE *f = fopen(dataOutputFilename1, "a");
             fprintf(f, "%s %s %s %d\n", file_date, file_time, license, 0);
+            fclose(f);
         }    
         break;
     case 6:
         inorder(root);       
         break;
+    case 7:
+        remove(dataOutputFilename2);
+        luu_ra_file(root, dataOutputFilename2);
+        printf("Luu thanh cong.\n");
+        break;
     }
   }
+
+  freeTree(&root);
   return 0;
 }
