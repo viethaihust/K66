@@ -6,7 +6,7 @@
 
 node* newNode(char date[], char time[], char license[])
 {
-  node *temp = (node*)calloc(10, sizeof(node));
+  node *temp = (node*)malloc(sizeof(node));
   strcpy(temp->date, date);
   strcpy(temp->time, time);
   strcpy(temp->license, license);
